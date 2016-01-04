@@ -45,10 +45,7 @@ char		*ft_get_line(char **str)
 		return (NULL);	
 	i = ft_check_line(*str);
 	if (i == 0)
-	{
-		cpy = (char *)malloc(sizeof(char));
-		cpy[0] = '\0';
-	}
+		ft_bzero((char *)cpy, 1);
 	else
 		cpy = ft_strsub(*str, 0, i);
 	if ((*str)[i + 1])
@@ -58,10 +55,7 @@ char		*ft_get_line(char **str)
 		free(tmp);
 	}
 	else
-	{
-		free(*str);
-		*str = NULL;
-	}
+		ft_memdel((void **)str);
 	return (cpy);
 }
 
