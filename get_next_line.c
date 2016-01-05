@@ -74,7 +74,9 @@ int		get_next_line(int const fd, char **line)
 	{
 		if (ft_check_line(rest) == -1)
 		{
-			ft_read(fd, &rest);
+			j = ft_read(fd, &rest);
+			if (j == -2)
+				return (-1);
 			*line = ft_get_line(&rest);
 		}
 		else
