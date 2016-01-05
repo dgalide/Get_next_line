@@ -4,7 +4,7 @@
 
  #include <stdio.h>
  #include <fcntl.h>
- #include "libft.h"
+ #include "libft/libft.h"
 
 int		get_next_line(int const fd, char **line);
 int		ft_get_all(int const fd, char **rest);

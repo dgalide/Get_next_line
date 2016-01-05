@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgalide <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/01/05 16:38:10 by dgalide           #+#    #+#             */
+/*   Updated: 2016/01/05 16:46:14 by dgalide          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-int		ft_check_line(char *str)
+int				ft_check_line(char *str)
 {
-	int i;
-	int j;
+	int 		i;
 
 	i = 0;
 	while (str[i])
@@ -15,14 +26,14 @@ int		ft_check_line(char *str)
 	return (-1);
 }
 
-int		ft_read(int const fd, char **rest)
+int				ft_read(int const fd, char **rest)
 {
-	int	ret;
-	int	i;
-	char	buff[BUFF_SIZE];
-	char	*tmp;
+	int			ret;
+	int			i;
+	char		buff[BUFF_SIZE];
+	char		*tmp;
 
-	while((ret = read(fd, buff, BUFF_SIZE)))	
+	while ((ret = read(fd, buff, BUFF_SIZE)))
 	{
 		if (*rest)
 		{
@@ -40,17 +51,17 @@ int		ft_read(int const fd, char **rest)
 	return (ret);
 }
 
-char		*ft_get_line(char **str)
+char			*ft_get_line(char **str)
 {
-	int	i;
-	char	*tmp;
-	char	*cpy;
+	int			i;
+	char		*tmp;
+	char		*cpy;
 
 	if (!*str)
 		return (NULL);
 	i = ft_check_line(*str);
 	if (i == 0)
-		ft_bzero((char *)cpy, 1);
+		cpy = ft_strnew(0);
 	else
 		cpy = ft_strsub(*str, 0, i);
 	if ((*str)[i + 1])
@@ -64,11 +75,11 @@ char		*ft_get_line(char **str)
 	return (cpy);
 }
 
-int		get_next_line(int const fd, char **line)
+int				get_next_line(int const fd, char **line)
 {
 	static char	*rest;
-	int	i;
-	int	j;
+	int			i;
+	int			j;
 
 	if (rest)
 	{
@@ -94,8 +105,7 @@ int		get_next_line(int const fd, char **line)
 	else
 		return (1);
 }
-
-int		main(int argc, char **argv)
+/*int		main(int argc, char **argv)
 {
 	int fd;
 	int	i;
@@ -111,4 +121,4 @@ int		main(int argc, char **argv)
 		printf("%s\n", line);
 	//}
 	return (0);
-}
+}*/
