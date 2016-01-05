@@ -12,12 +12,13 @@ int		ft_check_line(char *str)
 			return (i);
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
-int		ft_get_all(int const fd, char **rest)
+int		ft_read(int const fd, char **rest)
 {
 	int	ret;
+	int	i;
 	char	buff[BUFF_SIZE];
 	char	*tmp;
 
@@ -31,6 +32,10 @@ int		ft_get_all(int const fd, char **rest)
 		}
 		else
 			*rest = ft_strsub(buff, 0, ret);
+		if (ret == -1)
+			return (-2);
+		if ((i = ft_check_line(*rest)) != -1)
+			return (ret);
 	}
 	return (ret);
 }
@@ -42,7 +47,7 @@ char		*ft_get_line(char **str)
 	char	*cpy;
 
 	if (!*str)
-		return (NULL);	
+		return (NULL);
 	i = ft_check_line(*str);
 	if (i == 0)
 		ft_bzero((char *)cpy, 1);
@@ -66,12 +71,20 @@ int		get_next_line(int const fd, char **line)
 	int	j;
 
 	if (rest)
-		*line = ft_get_line(&rest);
+	{
+		if (ft_check_line(rest) == -1)
+		{
+			ft_read(fd, &rest);
+			*line = ft_get_line(&rest);
+		}
+		else
+			*line = ft_get_line(&rest);
+	}
 	else
 	{
-		i = ft_get_all(fd, &rest);
+		i = ft_read(fd, &rest);
 		*line = ft_get_line(&rest);
-		if (i == -1)
+		if (i == -2)
 			return (i);
 	}
 	if (rest == NULL)
