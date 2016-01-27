@@ -1,89 +1,67 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-void		check(int fd, t_list **lst)
+int			ft_check_line(char *line, int len)
 {
-	t_list  *tmp;
-	s_line	*line;
-	int	i;
+	int		i;
 
-	i = 1;
-	tmp = *lst;
-	if (tmp->content)
+	i = 0;
+	while (i < len)
 	{
-		if (tmp->content->fd && tmp->content->fd == fd)
-			return ;
-		if (tmp->next)
-			tmp = tmp->next;
-		else
-		{
-			tmp->next = ft_lstnew(NULL, 0);
-			tmp = tmp->next;
-			line = (s_line *)malloc(sizeof(t_list));
-			line->fd = fd;
-			tmp->content = line;
-		}
+		if (line[i] == '\n' || line[i] == EOF)
+			return (i);
+		i++;
 	}
-	else
-	{
-		line = (s_line *)malloc(sizeof(s_line));
-		line->fd = fd;
-		line->rest = NULL;
-		(*lst)->content = line;
-	}
+	return (-1);
 }
 
-int			ft_read(s_line *line)
+int			ft_read(int fd, char **rest)
 {
 	char		buff[BUFF_SIZE + 1];
 	char		*tmp;
-	int		i;
 	int		ret;
 
-	i = 0;
 	ret = 0;
-	while ((ret = read(line->fd, buff, BUFF_SIZE)))
+	while ((ret = read(fd, buff, BUFF_SIZE)))
 	{
 		if (ret == -1)
 			return (-1);
 		buff[ret] = '\0';
-		line->ret = ret;
-		tmp = line->rest;
-		if (line->rest)
-			line->rest = ft_strjoin(line->rest, buff);
+		tmp = *rest;
+		if (*rest)
+			*rest = ft_strjoin(*rest, buff);
 		else
-			line->rest = ft_strdup(buff);
+			*rest = ft_strdup(buff);
 		ft_memdel((void *)&tmp);
-		if (ft_strchr(line->rest, '\n') != NULL)
+		if (ft_strchr(*rest, '\n') != NULL)
 			return (1);
 	}
 	return (0);
 }
 
-int			get_line(s_line *content, char **line)
+int			get_line(char **rest, char **line)
 {
 	char		*tmp;
 	int		i;
-	int		j;
 
 	i = 0;
-	j = 0;
-	if (!content->rest)
+	if (!*rest)
 		return (0);
-	while (i < ft_strlen((char *)content->rest) && content->rest[i] != '\n')
-		i++;
-	if (i == ft_strlen((char *)(content->rest)))
+	i = ft_check_line(*rest, ft_strlen(*rest));
+	if ((i + 1)== ft_strlen((char *)(*rest)) || i == -1)
 	{
-		*line = ft_strdup(content->rest);
-		ft_memdel((void *)&content->rest);
+		*line = ft_strdup(*rest);
+		ft_memdel((void *)rest);
 		return (1);
 	}
 	else
 	{
-		tmp = content->rest;
-		*line = ft_strsub(content->rest, 0, i);
-		content->rest = ft_strchr(content->rest, '\n');
-		content->rest++;
+		tmp = *rest;
+		if (i == 0)
+			*line = ft_strnew(1);
+		else
+			*line = ft_strsub(*rest, 0, i);
+		*rest = ft_strdup(ft_strchr(*rest, '\n') + 1);
 		ft_memdel((void *)&tmp);
 		return (1);
 	}
@@ -91,37 +69,28 @@ int			get_line(s_line *content, char **line)
 
 int			get_next_line(int fd, char **line)
 {
-	static t_list	*lst;
-	t_list		*tmp;
+	static char	*rest;
 	int		i;
 
-	i = 0;
-	if (!lst)
-	{
-		lst = (t_list *)malloc(sizeof(t_list));
-		lst->content = NULL;
-	}
-	tmp = lst;
-	check(fd, &lst);
-	while (tmp->content->fd != fd)
-		tmp = tmp->next;
-	i = ft_read(tmp->content);
+	i = ft_read(fd, &rest);
 	if (i == -1)
-	{
-		ft_putchar('A');
 		return (-1);
-	}
-	i = get_line(tmp->content, line);
-	printf("line = %s\nrest = %s", *line, lst->content->rest);
+	i = get_line(&rest, line);
 	return (i);
 }
 
 int			main(int argc, char **argv)
 {
 	int fd;
+	int fd1;
 	char	*line;
 
 	fd = open(argv[1], O_RDONLY);
-	get_next_line(fd, &line);
+	fd1 = open(argv[2], O_RDONLY);
+	printf("%d", get_next_line(fd, &line));
+	ft_putendl(line);
+	printf("%d", get_next_line(fd, &line));
+	ft_putendl(line);
+	printf("%d", get_next_line(fd, &line));
 	return (0);
 }
