@@ -48,7 +48,7 @@ int			get_line(char **rest, char **line)
 	if (!*rest)
 		return (0);
 	i = ft_check_line(*rest, ft_strlen(*rest));
-	if ((i + 1)== ft_strlen((char *)(*rest)) || i == -1)
+	if ((i + 1) == (int)ft_strlen((char *)(*rest)) || i == -1)
 	{
 		*line = ft_strdup(*rest);
 		ft_memdel((void *)rest);
@@ -78,7 +78,7 @@ int			get_next_line(int fd, char **line)
 	i = get_line(&rest, line);
 	return (i);
 }
-
+/*
 int			main(int argc, char **argv)
 {
 	int fd;
@@ -93,4 +93,4 @@ int			main(int argc, char **argv)
 	ft_putendl(line);
 	printf("%d", get_next_line(fd, &line));
 	return (0);
-}
+}*/
